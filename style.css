@@ -1,92 +1,190 @@
+/* =========================
+   RESET & BASE
+========================= */
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
   background: #f2f2f7;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-               "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", Arial, sans-serif;
+  color: #1c1c1e;
 }
 
+/* =========================
+   LAYOUT
+========================= */
 .app {
-  max-width: 430px;
+  max-width: 430px;              /* iPhone 14 Pro Max width */
   margin: auto;
-  padding: 20px 14px 40px;
+  padding: 20px 14px 36px;
+}
+
+@media (min-width: 768px) {
+  .app {
+    max-width: 520px;
+  }
 }
 
 .card {
   background: #ffffff;
-  border-radius: 22px;
-  padding: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  border-radius: 24px;
+  padding: 18px 16px 20px;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.08),
+    0 2px 6px rgba(0,0,0,0.04);
 }
 
-/* Header */
+/* =========================
+   HEADER
+========================= */
 h2 {
+  margin: 6px 0 18px;
   text-align: center;
   font-size: 20px;
-  margin-bottom: 18px;
   font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
-/* Labels */
+/* =========================
+   FORM LABELS
+========================= */
 label {
-  font-size: 12px;
-  color: #6e6e73;
-  margin-top: 14px;
   display: block;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6e6e73;
 }
 
-/* Inputs */
-input, select, textarea {
+/* =========================
+   INPUTS & SELECT
+========================= */
+input,
+select,
+textarea {
   width: 100%;
   margin-top: 6px;
   padding: 12px 14px;
-  font-size: 14px;
-  border-radius: 12px;
+  font-size: 15px;
+  border-radius: 14px;
   border: 1px solid #e5e5ea;
   background: #f9f9fb;
   outline: none;
+  transition: border 0.15s ease, background 0.15s ease;
+}
+
+input::placeholder {
+  color: #8e8e93;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
+  background: #ffffff;
   border-color: #007aff;
-  background: #fff;
 }
 
-/* Buttons */
+/* Disable number arrows on desktop */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* =========================
+   TEXTAREA (QUOTATION)
+========================= */
+textarea {
+  margin-top: 18px;
+  min-height: 260px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: #f2f2f7;
+  resize: none;
+}
+
+/* =========================
+   BUTTONS
+========================= */
 button {
   width: 100%;
   margin-top: 16px;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: none;
   font-size: 15px;
   font-weight: 600;
   background: #007aff;
   color: white;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition:
+    transform 0.12s ease,
+    opacity 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
-/* iPhone bounce */
+/* iOS press animation */
 button:active {
   transform: scale(0.97);
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
-/* Copy button secondary */
+/* Secondary button (Copy) */
 button:last-of-type {
   background: #34c759;
 }
 
-/* Output */
-textarea {
-  margin-top: 18px;
-  font-size: 13px;
-  line-height: 1.5;
-  background: #f2f2f7;
+/* =========================
+   SAFE AREA SUPPORT (iOS)
+========================= */
+@supports (padding: max(0px)) {
+  .app {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    padding-bottom: max(36px, env(safe-area-inset-bottom));
+  }
+}
+
+/* =========================
+   DARK MODE (iOS STYLE)
+========================= */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #000000;
+    color: #f2f2f7;
+  }
+
+  .card {
+    background: #1c1c1e;
+    box-shadow: none;
+  }
+
+  label {
+    color: #8e8e93;
+  }
+
+  input,
+  select,
+  textarea {
+    background: #2c2c2e;
+    border-color: #3a3a3c;
+    color: #f2f2f7;
+  }
+
+  textarea {
+    background: #2c2c2e;
+  }
+
+  button {
+    background: #0a84ff;
+  }
+
+  button:last-of-type {
+    background: #30d158;
+  }
 }
