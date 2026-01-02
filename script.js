@@ -1,137 +1,90 @@
-/***********************
- * DATA CONFIGURATION
- ***********************/
+/************* DATA *************/
 const homestays = {
-  "Çapa": { short: 485, long: 435, max: 5, extraAllowed: false },
-  "Fındıkzade": { short: 440, long: 390, max: 4, extraAllowed: false },
-  "Pazartekke": { short: 460, long: 410, max: 5, extraAllowed: true },
-  "Haseki": { short: 535, long: 485, max: 6, extraAllowed: true },
-  "Cibali": { short: 860, long: 790, max: 12, extraAllowed: true },
-  "Saray Kuning": { short: 640, long: 590, max: 9, extraAllowed: true },
-  "Saray Merah": { short: 720, long: 670, max: 12, extraAllowed: true },
-  "Saray Biru": { short: 975, long: 890, max: 18, extraAllowed: true },
-  "Balat": { short: 430, long: 380, max: 6, extraAllowed: true },
-  "Beyazıt": { short: 445, long: 395, max: 7, extraAllowed: true },
-  "Çarşamba Studios": { short: 310, long: 270, max: 3, extraAllowed: true }
+  "Çapa": { short:485, long:435, max:5, extra:false },
+  "Fındıkzade": { short:440, long:390, max:4, extra:false },
+  "Pazartekke": { short:460, long:410, max:5, extra:true },
+  "Haseki": { short:535, long:485, max:6, extra:true },
+  "Cibali": { short:860, long:790, max:12, extra:true },
+  "Saray Kuning": { short:640, long:590, max:9, extra:true },
+  "Saray Merah": { short:720, long:670, max:12, extra:true },
+  "Saray Biru": { short:975, long:890, max:18, extra:true },
+  "Balat": { short:430, long:380, max:6, extra:true },
+  "Saray Studios": { short:215, long:190, max:2, extra:true },
+  "Çarşamba Studios": { short:310, long:270, max:3, extra:true },
+  "Beyazıt": { short:445, long:395, max:7, extra:true }
 };
 
-/***********************
- * INITIAL SETUP
- ***********************/
-const houseSelect = document.getElementById("house");
+const roomstays = {
+  "Koca Mustafapaşa": { nightly:90, weekly:500, twoWeeks:900, monthly:1500, max:2 },
+  "Çapa (Private)": { nightly:140, weekly:650, twoWeeks:1100, monthly:1900, max:3, extra:60 },
+  "Çapa (Sharing)": { nightly:75, weekly:425, twoWeeks:700, monthly:1100, perPax:true }
+};
 
-// Populate dropdown
-Object.keys(homestays).forEach(name => {
-  const opt = document.createElement("option");
-  opt.value = name;
-  opt.textContent = name;
-  houseSelect.appendChild(opt);
-});
+/************* INIT *************/
+const homestaySelect = document.getElementById("homestay");
+const roomstaySelect = document.getElementById("roomstay");
 
-// Add "Others (Manual)" at END
-const otherOpt = document.createElement("option");
-otherOpt.value = "Others";
-otherOpt.textContent = "Others (Manual)";
-houseSelect.appendChild(otherOpt);
+Object.keys(homestays).forEach(h => homestaySelect.add(new Option(h,h)));
+homestaySelect.add(new Option("Others (Manual)","Others"));
 
-/***********************
- * UTILITIES
- ***********************/
-function getNights(checkin, checkout) {
-  return Math.round((checkout - checkin) / (1000 * 60 * 60 * 24));
+Object.keys(roomstays).forEach(r => roomstaySelect.add(new Option(r,r)));
+
+/************* HELPERS *************/
+const nightsBetween = (a,b)=>Math.round((b-a)/(1000*60*60*24));
+const fmt = d=>d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+
+/************* SWITCH *************/
+function switchService(){
+  const type = document.getElementById("serviceType").value;
+  document.getElementById("homestaySection").style.display = type==="homestay"?"block":"none";
+  document.getElementById("roomstaySection").style.display = type==="roomstay"?"block":"none";
 }
 
-function formatDate(date) {
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric"
-  });
+/************* HOMESTAY *************/
+function updateHomestayRate(){
+  const h = homestaySelect.value;
+  if(h==="Others") return;
+
+  const inD = new Date(checkin.value);
+  const outD = new Date(checkout.value);
+  const nights = nightsBetween(inD,outD);
+  if(nights<=0) return;
+
+  rate.value = nights>=5 ? homestays[h].long : homestays[h].short;
 }
 
-/***********************
- * AUTO RATE UPDATE
- ***********************/
-function updateRate() {
-  const house = houseSelect.value;
-  const checkinVal = document.getElementById("checkin").value;
-  const checkoutVal = document.getElementById("checkout").value;
+/************* GENERATE *************/
+function generateQuotation(){
+  const type = serviceType.value;
+  let text="";
 
-  if (!checkinVal || !checkoutVal) return;
-  if (house === "Others") return;
+  if(type==="homestay"){
+    const h = homestaySelect.value;
+    const inD=new Date(checkin.value), outD=new Date(checkout.value);
+    const nights=nightsBetween(inD,outD);
+    const r=+rate.value, d=+discount.value, p=+pax.value;
+    let extra=0;
 
-  const checkin = new Date(checkinVal);
-  const checkout = new Date(checkoutVal);
-  const nights = getNights(checkin, checkout);
-
-  if (nights <= 0) return;
-
-  const rate =
-    nights >= 5 ? homestays[house].long : homestays[house].short;
-
-  document.getElementById("rate").value = rate;
-}
-
-/***********************
- * GENERATE QUOTATION
- ***********************/
-function generate() {
-  const house = houseSelect.value;
-  const checkin = new Date(document.getElementById("checkin").value);
-  const checkout = new Date(document.getElementById("checkout").value);
-  const rate = Number(document.getElementById("rate").value);
-  const discount = Number(document.getElementById("discount").value);
-  const pax = Number(document.getElementById("pax").value);
-  const depositPercent = Number(document.getElementById("depositPercent").value);
-
-  const nights = getNights(checkin, checkout);
-  if (nights <= 0) {
-    alert("Invalid check-in / check-out date");
-    return;
-  }
-
-  /***********************
-   * EXTRA PAX LOGIC
-   ***********************/
-  let extraCharge = 0;
-  let extraText = "";
-
-  if (house !== "Others") {
-    const stay = homestays[house];
-    if (pax > stay.max && stay.extraAllowed) {
-      const extraPax = pax - stay.max;
-      extraCharge = extraPax * 35 * nights;
-      extraText = `
-👥 Additional Pax Charge:
-RM35 × ${extraPax} pax × ${nights} nights
-= RM${extraCharge.toLocaleString()}
-`;
+    if(h!=="Others"){
+      const s=homestays[h];
+      if(p>s.max && s.extra) extra=(p-s.max)*35*nights;
     }
-  }
 
-  /***********************
-   * TOTAL CALCULATION
-   ***********************/
-  const finalRate = rate - discount;
-  const baseTotal = finalRate * nights;
-  const total = baseTotal + extraCharge;
-  const deposit = Math.round((depositPercent / 100) * total);
+    const total=(r-d)*nights+extra;
+    const dep=Math.round(total*depositPercent.value/100);
 
-  /***********************
-   * OUTPUT TEXT
-   ***********************/
-  const quotation = `
-🏡 Malezya Homestay+ | ${house}
+    text=`
+🏡 Malezya Homestay+ | ${h}
 
 PRICE QUOTE
 ━━━━━━━━━━━━━
 
 🚪 Check-In
-📅 ${formatDate(checkin)}
+📅 ${fmt(inD)}
 🕒 From 3:00 PM onwards
 
 👋🏻 Check-Out
-📅 ${formatDate(checkout)}
+📅 ${fmt(outD)}
 🕛 By 11:00 AM
 
 ━━━━━━━━━━━━━
@@ -140,38 +93,41 @@ PRICE QUOTE
 ${nights} nights
 
 💰 Rate Breakdown:
-(RM${rate} - RM${discount} Long Stay Discount) × ${nights} nights
-= RM${baseTotal.toLocaleString()}
-${extraText}
+(RM${r} - RM${d}) × ${nights} nights
+= RM${total.toLocaleString()}
+
 🔒 Booking Deposit:
-~${depositPercent}% of total = RM${deposit.toLocaleString()}
+~${depositPercent.value}% = RM${dep.toLocaleString()}
+`;
+  }
 
-━━━━━━━━━━━━━
+  if(type==="roomstay"){
+    const r=roomstays[roomstay.value];
+    let total=r[duration.value];
+    if(r.perPax) total*=roomPax.value;
+    if(r.extra && roomPax.value>r.max)
+      total+=(roomPax.value-r.max)*r.extra;
 
-💳 Payment Details
-Bank: Maybank
-Account No: 162263816091
-Account Name: Ariff Imran Bin Kamarul Zaman
+    text=`
+🛏️ Malezya Roomstay+ | ${roomstay.value}
 
-━━━━━━━━━━━━━
+🗓 Duration: ${duration.options[duration.selectedIndex].text}
+👥 Pax: ${roomPax.value}
 
-📝 Terms & Conditions
-1.⁠ ⁠Reservation will only be confirmed once the booking deposit is received
-2.⁠ ⁠The booking deposit is non-refundable
-3.⁠ ⁠⁠Full payment to be made upon check-in
+💰 Total: RM${total.toLocaleString()}
 
-👋🏻 We look forward to hosting you at Malezya Homestay, your home in Türkiye 🇹🇷
-`.trim();
+📝 Notes:
+• Booking fee required
+• Non-refundable
+`;
+  }
 
-  document.getElementById("output").value = quotation;
+  output.value=text.trim();
 }
 
-/***********************
- * COPY FUNCTION
- ***********************/
-function copyText() {
-  const textarea = document.getElementById("output");
-  textarea.select();
+/************* COPY *************/
+function copyText(){
+  output.select();
   document.execCommand("copy");
-  alert("Quotation copied. Ready to send via WhatsApp.");
+  alert("Copied!");
 }
