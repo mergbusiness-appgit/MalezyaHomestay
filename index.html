@@ -10,17 +10,17 @@
 <div class="container">
   <h2>Malezya Homestay+ Quotation</h2>
 
-  <label>Homestay Name</label>
-  <input id="house" placeholder="Cibali">
+  <label>Homestay</label>
+  <select id="house" onchange="updateRate()"></select>
 
   <label>Check-In Date</label>
-  <input type="date" id="checkin">
+  <input type="date" id="checkin" onchange="updateRate()">
 
   <label>Check-Out Date</label>
-  <input type="date" id="checkout">
+  <input type="date" id="checkout" onchange="updateRate()">
 
   <label>Rate per Night (RM)</label>
-  <input type="number" id="rate" placeholder="860">
+  <input type="number" id="rate">
 
   <label>Discount per Night (RM)</label>
   <input type="number" id="discount" value="0">
@@ -30,7 +30,7 @@
 
   <button onclick="generate()">Generate Quotation</button>
 
-  <textarea id="output" rows="20" readonly></textarea>
+  <textarea id="output" rows="22" readonly></textarea>
 
   <button onclick="copyText()">Copy & Send</button>
 </div>
