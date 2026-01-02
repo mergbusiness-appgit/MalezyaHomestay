@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Malezya Homestay Quotation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Malezya Homestay+ Quotation</h2>
+
+  <label>Homestay Name</label>
+  <input id="house" placeholder="Cibali">
+
+  <label>Check-In Date</label>
+  <input type="date" id="checkin">
+
+  <label>Check-Out Date</label>
+  <input type="date" id="checkout">
+
+  <label>Rate per Night (RM)</label>
+  <input type="number" id="rate" placeholder="860">
+
+  <label>Discount per Night (RM)</label>
+  <input type="number" id="discount" value="0">
+
+  <label>Deposit %</label>
+  <input type="number" id="depositPercent" value="25">
+
+  <button onclick="generate()">Generate Quotation</button>
+
+  <textarea id="output" rows="20" readonly></textarea>
+
+  <button onclick="copyText()">Copy & Send</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
