@@ -1,45 +1,92 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
+  margin: 0;
+  background: #f2f2f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Helvetica Neue", Arial, sans-serif;
 }
 
-.container {
+.app {
   max-width: 430px;
-  background: #fff;
-  padding: 20px;
-  margin: 30px auto;
-  border-radius: 12px;
+  margin: auto;
+  padding: 20px 14px 40px;
 }
 
+.card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+/* Header */
 h2 {
   text-align: center;
+  font-size: 20px;
+  margin-bottom: 18px;
+  font-weight: 600;
 }
 
+/* Labels */
 label {
-  font-size: 13px;
-  margin-top: 10px;
+  font-size: 12px;
+  color: #6e6e73;
+  margin-top: 14px;
   display: block;
 }
 
-input, select {
+/* Inputs */
+input, select, textarea {
   width: 100%;
-  padding: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e5ea;
+  background: #f9f9fb;
+  outline: none;
 }
 
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #007aff;
+  background: #fff;
+}
+
+/* Buttons */
 button {
   width: 100%;
-  padding: 10px;
-  margin-top: 15px;
-  background: #000;
-  color: #fff;
-  border-radius: 6px;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 14px;
   border: none;
+  font-size: 15px;
+  font-weight: 600;
+  background: #007aff;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
+/* iPhone bounce */
+button:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+/* Copy button secondary */
+button:last-of-type {
+  background: #34c759;
+}
+
+/* Output */
 textarea {
-  width: 100%;
-  margin-top: 15px;
-  padding: 10px;
+  margin-top: 18px;
   font-size: 13px;
+  line-height: 1.5;
+  background: #f2f2f7;
 }
