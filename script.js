@@ -33,7 +33,7 @@ Object.keys(roomstays).forEach(r => roomstaySelect.add(new Option(r,r)));
 const nightsBetween = (a,b)=>Math.round((b-a)/(1000*60*60*24));
 const fmt = d=>d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
 
-/************* SWITCH *************/
+/************* SWITCH SERVICE TYPE *************/
 function switchService(){
   const type = document.getElementById("serviceType").value;
   const homestaySec = document.getElementById("homestaySection");
@@ -42,29 +42,21 @@ function switchService(){
   if(type==="homestay"){
     homestaySec.style.display = "block";
     roomstaySec.style.display = "none";
+    if(homestaySelect.options.length === 0){
+      Object.keys(homestays).forEach(h => homestaySelect.add(new Option(h,h)));
+      homestaySelect.add(new Option("Others (Manual)","Others"));
+    }
+    updateHomestayRate();
   } else {
     homestaySec.style.display = "none";
     roomstaySec.style.display = "block";
-  }
-
-  // Preserve previously selected values
-  // This repopulates selects if empty
-  if(homestaySelect.options.length === 0){
-    Object.keys(homestays).forEach(h => homestaySelect.add(new Option(h,h)));
-    homestaySelect.add(new Option("Others (Manual)","Others"));
-  }
-
-  if(roomstaySelect.options.length === 0){
-    Object.keys(roomstays).forEach(r => roomstaySelect.add(new Option(r,r)));
+    if(roomstaySelect.options.length === 0){
+      Object.keys(roomstays).forEach(r => roomstaySelect.add(new Option(r,r)));
+    }
   }
 }
 
-if(type === "homestay" && homestaySelect.value !== ""){
-    updateHomestayRate();
-}
-
-
-/************* HOMESTAY *************/
+/************* HOMESTAY RATE UPDATE *************/
 function updateHomestayRate(){
   const h = homestaySelect.value;
   if(h==="Others") return;
@@ -77,7 +69,7 @@ function updateHomestayRate(){
   rate.value = nights>=5 ? homestays[h].long : homestays[h].short;
 }
 
-/************* GENERATE *************/
+/************* GENERATE QUOTATION *************/
 function generateQuotation(){
   const type = serviceType.value;
   let text="";
@@ -122,6 +114,22 @@ ${nights} nights
 
 🔒 Booking Deposit:
 ~${depositPercent.value}% = RM${dep.toLocaleString()}
+
+━━━━━━━━━━━━━
+
+💳 Payment Details
+Bank: Maybank
+Account No: 162263816091
+Account Name: Ariff Imran Bin Kamarul Zaman
+
+━━━━━━━━━━━━━
+
+📝 Terms & Conditions
+1. Reservation will only be confirmed once the booking deposit is received
+2. The booking deposit is non-refundable
+3. Full payment to be made upon check-in
+
+👋🏻 We look forward to hosting you at Malezya Homestay, your home in Türkiye 🇹🇷
 `;
   }
 
@@ -149,7 +157,7 @@ ${nights} nights
   output.value=text.trim();
 }
 
-/************* COPY *************/
+/************* COPY TO CLIPBOARD *************/
 function copyText(){
   output.select();
   document.execCommand("copy");
