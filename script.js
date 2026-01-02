@@ -36,9 +36,33 @@ const fmt = d=>d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"nu
 /************* SWITCH *************/
 function switchService(){
   const type = document.getElementById("serviceType").value;
-  document.getElementById("homestaySection").style.display = type==="homestay"?"block":"none";
-  document.getElementById("roomstaySection").style.display = type==="roomstay"?"block":"none";
+  const homestaySec = document.getElementById("homestaySection");
+  const roomstaySec = document.getElementById("roomstaySection");
+
+  if(type==="homestay"){
+    homestaySec.style.display = "block";
+    roomstaySec.style.display = "none";
+  } else {
+    homestaySec.style.display = "none";
+    roomstaySec.style.display = "block";
+  }
+
+  // Preserve previously selected values
+  // This repopulates selects if empty
+  if(homestaySelect.options.length === 0){
+    Object.keys(homestays).forEach(h => homestaySelect.add(new Option(h,h)));
+    homestaySelect.add(new Option("Others (Manual)","Others"));
+  }
+
+  if(roomstaySelect.options.length === 0){
+    Object.keys(roomstays).forEach(r => roomstaySelect.add(new Option(r,r)));
+  }
 }
+
+if(type === "homestay" && homestaySelect.value !== ""){
+    updateHomestayRate();
+}
+
 
 /************* HOMESTAY *************/
 function updateHomestayRate(){
