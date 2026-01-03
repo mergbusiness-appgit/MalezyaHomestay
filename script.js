@@ -66,30 +66,69 @@ function updateHomestayRate(){
   const nights = nightsBetween(inD,outD);
   if(nights<=0) return;
 
-  rate.value = nights>=5 ? homestays[h].long : homestays[h].short;
+  rate.value = nights >= 5 ? homestays[h].long : homestays[h].short;
+
+  updateExtraPaxInfo();
 }
 
+
 /************* GENERATE QUOTATION *************/
-function generateQuotation(){
-  const type = serviceType.value;
-  let text="";
+function updateExtraPaxInfo(){
+  const h = homestaySelect.value;
+  const p = +pax.value;
+  const info = document.getElementById("extraPaxInfo");
 
-  if(type==="homestay"){
-    const h = homestaySelect.value;
-    const inD=new Date(checkin.value), outD=new Date(checkout.value);
-    const nights=nightsBetween(inD,outD);
-    const r=+rate.value, d=+discount.value, p=+pax.value;
-    let extra=0;
+  if(!homestays[h]) {
+    info.style.display = "none";
+    return;
+  }
 
-    if(h!=="Others"){
-      const s=homestays[h];
-      if(p>s.max && s.extra) extra=(p-s.max)*35*nights;
+  const s = homestays[h];
+
+  // Exceptions: Çapa & Fındıkzade
+  if(h === "Çapa" || h === "Fındıkzade"){
+    info.style.display = "none";
+    return;
+  }
+
+  if(p > s.max){
+    info.style.display = "block";
+    info.innerText =
+      `⚠️ ${p - s.max} additional pax × RM35 / night will be charged`;
+  } else {
+    info.style.display = "none";
+  }
+}
+
+
+if(type==="homestay"){
+  const h = homestaySelect.value;
+  const inD=new Date(checkin.value), outD=new Date(checkout.value);
+  const nights=nightsBetween(inD,outD);
+  const r=+rate.value, d=+discount.value, p=+pax.value;
+
+  let extraPaxCharge = 0;
+  let extraText = "";
+
+  if(h!=="Others"){
+    const s = homestays[h];
+
+    if(p > s.max && h !== "Çapa" && h !== "Fındıkzade"){
+      const extraPax = p - s.max;
+      extraPaxCharge = extraPax * 35 * nights;
+
+      extraText = `
+➕ Extra Pax Charge:
+${extraPax} pax × RM35 × ${nights} nights
+= RM${extraPaxCharge.toLocaleString()}
+`;
     }
+  }
 
-    const total=(r-d)*nights+extra;
-    const dep=Math.round(total*depositPercent.value/100);
+  const total = ((r - d) * nights) + extraPaxCharge;
+  const dep = Math.round(total * depositPercent.value / 100);
 
-    text=`
+  text = `
 🏡 Malezya Homestay+ | ${h}
 
 PRICE QUOTE
@@ -110,7 +149,11 @@ ${nights} nights
 
 💰 Rate Breakdown:
 (RM${r} - RM${d}) × ${nights} nights
-= RM${total.toLocaleString()}
+= RM${((r-d)*nights).toLocaleString()}
+
+${extraText}
+💳 Total Amount:
+RM${total.toLocaleString()}
 
 🔒 Booking Deposit:
 ~${depositPercent.value}% = RM${dep.toLocaleString()}
@@ -128,10 +171,13 @@ Account Name: Ariff Imran Bin Kamarul Zaman
 1. Reservation will only be confirmed once the booking deposit is received
 2. The booking deposit is non-refundable
 3. Full payment to be made upon check-in
+4. Additional RM35 per pax/night applies if pax exceeds maximum
+   (Except for Çapa & Fındıkzade)
 
 👋🏻 We look forward to hosting you at Malezya Homestay, your home in Türkiye 🇹🇷
 `;
-  }
+}
+
 
   if(type==="roomstay"){
     const r=roomstays[roomstay.value];
